@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: "."
+      target: app-local
+      secrets:
+        - composer
+    volumes:
+      - ./:/app
+      - ${COMPOSER_HOME}:/.composer:consistent
+
+  web:
+    build:
+      context: "."
+      target: web-local
+    volumes:
+      - ./public/:/app/public
+    ports:
+      - 8001:80
+    depends_on:
+      app:
+        condition: service_started
+
+secrets:
+  composer:
+    file: ${COMPOSER_HOME}/auth.json
